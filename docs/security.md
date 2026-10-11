@@ -9,6 +9,8 @@ Dokumen ini berisi aturan keamanan dan efisiensi dasar untuk project perpustakaa
 - Jangan hanya menyembunyikan tombol di Blade untuk membatasi akses.
 - Role minimal: `admin`, `officer`, dan `student`.
 - User nonaktif tidak boleh melakukan transaksi.
+- User `student` tidak boleh mengakses panel Filament admin.
+- User `admin` dan `officer` hanya mendapat aksi sesuai policy dan kebutuhan tugasnya.
 
 Contoh posisi route: `routes/web.php`
 
@@ -25,8 +27,23 @@ Route::middleware(['auth'])->group(function () {
 - Jangan mempercayai nilai harga, stok, role, atau status dari browser.
 - Gunakan Eloquent atau Query Builder, bukan query SQL yang digabung langsung dengan input user.
 - Gunakan `{{ }}` di Blade agar output di-escape.
+- Validasi pada Filament Form adalah lapisan UI; validasi dan authorization server tetap wajib.
 
-## 3. Perlindungan database
+## 3. Aturan akses Filament
+
+Implementasikan `FilamentUser` dan `canAccessPanel()` pada `App\Models\User` setelah Filament dipasang. Contoh aturan awal:
+
+```php
+public function canAccessPanel(\Filament\Panel $panel): bool
+{
+    return $this->is_active
+        && in_array($this->role, ['admin', 'officer'], true);
+}
+```
+
+Aturan ini hanya membatasi akses panel. Aksi create, update, delete, dan akses record tetap harus dilindungi policy.
+
+## 4. Perlindungan database
 
 - Gunakan foreign key, unique index, dan constraint yang sesuai.
 - Gunakan `DB::transaction()` untuk peminjaman dan pengembalian.
@@ -34,8 +51,9 @@ Route::middleware(['auth'])->group(function () {
 - Jangan pernah membiarkan stok menjadi negatif.
 - Simpan password melalui hashing Laravel; jangan menyimpan password plain text.
 - Jangan commit `.env`, password, token, atau credential database.
+- Jangan mengubah source code di `vendor/`; perubahan seperti itu tidak terkontrol dan dapat hilang saat dependency di-install ulang.
 
-## 4. Hindari N+1 query
+## 5. Hindari N+1 query
 
 N+1 query harus dihindari. N+1 bukan pola yang perlu digunakan; ini terjadi ketika aplikasi menjalankan satu query utama lalu satu query tambahan untuk setiap data relasi.
 
@@ -66,7 +84,7 @@ $books = Book::query()
 - Periksa query dengan Laravel Debugbar atau Laravel Telescope hanya di environment development.
 - Tambahkan feature test untuk halaman yang memiliki banyak relasi.
 
-## 5. Session, CSRF, dan upload
+## 6. Session, CSRF, dan upload
 
 - Form `POST`, `PUT`, `PATCH`, dan `DELETE` wajib menggunakan CSRF protection Laravel.
 - Regenerate session setelah login jika flow autentikasi dikustomisasi.
@@ -74,7 +92,7 @@ $books = Book::query()
 - Simpan file upload di storage, bukan langsung di folder yang dapat menjalankan script.
 - Jangan menampilkan stack trace kepada user production.
 
-## 6. Production checklist
+## 7. Production checklist
 
 - [ ] `APP_ENV=production`.
 - [ ] `APP_DEBUG=false`.

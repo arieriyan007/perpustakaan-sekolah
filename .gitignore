@@ -1,1 +1,5 @@
 node_modules
+
+/public/css/filament
+/public/fonts/filament
+/public/js/filament

@@ -15,6 +15,7 @@ Selesaikan persiapan komputer sebelum membuat fitur aplikasi.
 - Composer untuk mengelola dependensi PHP.
 - MySQL untuk database.
 - Node.js dan npm untuk dependensi frontend serta Vite.
+- Filament 5 sebagai panel admin Laravel.
 - Git untuk version control.
 - Editor kode seperti VS Code.
 
@@ -58,6 +59,19 @@ composer install
 npm install
 ```
 
+### Memasang Filament panel admin
+
+Filament dipakai untuk panel admin dan petugas pada URL `/admin`:
+
+```bash
+composer require filament/filament:"^5.0"
+php artisan filament:install --panels
+npm install
+npm run build
+```
+
+Filament Resource akan dibuat di `app/Filament/Resources`. Model, migration, policy, dan service tetap dibuat menggunakan struktur Laravel biasa.
+
 Dependensi tambahan dipasang hanya jika memang dibutuhkan. Contoh autentikasi Laravel berbasis Blade:
 
 ```bash
@@ -100,6 +114,7 @@ Jangan memasang package tanpa alasan yang terdokumentasi. Catat package baru pad
 ## Fase 4 — Master data
 
 - CRUD kategori, buku, dan anggota.
+- Resource Filament untuk kategori, buku, dan anggota.
 - Search, filter, pagination, dan validasi.
 - Data dapat dinonaktifkan atau di-soft-delete.
 

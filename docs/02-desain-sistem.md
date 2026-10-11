@@ -1,15 +1,48 @@
 # 2. Desain Sistem
 
-## Arsitektur
+## Arsitektur teknologi
+
+```text
+Laravel 13
+├── PHP backend
+├── Eloquent ORM + MySQL
+├── Filament 5 panel admin
+│   ├── Admin
+│   ├── Petugas
+│   └── Resources, Pages, Widgets
+└── Blade + Tailwind untuk halaman publik dan kebutuhan khusus
+```
+
+Laravel tetap menjadi pusat aplikasi. Filament hanya menjadi antarmuka admin di atas model, policy, service, dan database Laravel.
+
+## Arsitektur request
 
 ```text
 Browser
-  -> Route -> Middleware -> Controller -> Form Request
+  ├── /admin -> Filament Panel -> Resource/Page -> Policy/Service -> Model -> MySQL
+  └── /      -> Route -> Middleware -> Controller -> Form Request
                                       -> Service -> Model -> MySQL
-  <- Blade View <- Controller
+                                   <- Blade View <- Controller
 ```
 
-Controller menerima request dan mengembalikan response. Form Request menangani validasi. Service menangani aturan bisnis. Model menangani relasi dan akses data.
+Controller menerima request dan mengembalikan response. Form Request menangani validasi. Service menangani aturan bisnis. Model menangani relasi dan akses data. Filament Resource menangani tabel dan form panel, tetapi aturan authorization tetap wajib berada di policy atau mekanisme server-side.
+
+## Pembagian penggunaan
+
+| Area | Teknologi | Pengguna |
+|---|---|---|
+| Panel `/admin` | Filament | Admin dan petugas |
+| Katalog publik | Blade + Laravel | Siswa, guru, pengunjung |
+| Proses bisnis | Service Laravel | Dipakai oleh Filament dan Blade |
+| Data dan relasi | Eloquent + MySQL | Seluruh aplikasi |
+
+## Rekomendasi arsitektur
+
+- Gunakan Filament untuk CRUD, dashboard, tabel, filter, form, dan laporan internal.
+- Gunakan Blade untuk katalog publik dan halaman yang membutuhkan desain sangat khusus.
+- Gunakan Service untuk stok, peminjaman, pengembalian, dan denda agar logika tidak terkunci di Filament Resource.
+- Gunakan Policy untuk membatasi aksi admin, petugas, dan siswa.
+- Jangan membuat panel Filament kedua sebelum kebutuhan multi-panel benar-benar jelas.
 
 ## Struktur halaman
 

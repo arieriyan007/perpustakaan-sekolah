@@ -2,7 +2,7 @@
 
 ## Prasyarat
 
-PHP sesuai versi Laravel, Composer, MySQL, Node.js, npm, Git, dan editor kode. Catat semua versinya di dokumentasi project.
+PHP 8.3+, Composer, MySQL, Node.js, npm, Git, dan editor kode. Project menggunakan Laravel 13 dan Filament 5. Catat semua versi di dokumentasi project.
 
 ## Membuat project Laravel
 
@@ -51,6 +51,25 @@ php artisan storage:link
 npm install
 npm run dev
 ```
+
+## Install Filament
+
+Jalankan dari root project Laravel:
+
+```bash
+composer require filament/filament:"^5.0"
+php artisan filament:install --panels
+npm install
+npm run build
+```
+
+Filament akan membuat panel provider di:
+
+```text
+app/Providers/Filament/AdminPanelProvider.php
+```
+
+Panel admin dapat diakses melalui `/admin`. Gunakan Filament untuk admin dan petugas, sedangkan halaman katalog publik tetap dapat menggunakan Blade.
 
 ## Git awal
 
